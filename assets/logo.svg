@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <!-- 背景（親しみやすい丸みのあるベース） -->
+  <defs>
+    <style>
+      .pear-body { fill: #E8D358; stroke: #3D3D3D; stroke-width: 8; stroke-linejoin: round; }
+      .pear-leaf { fill: #7EBA59; stroke: #3D3D3D; stroke-width: 8; stroke-linejoin: round; }
+      .pear-stem { fill: #9B7653; stroke: #3D3D3D; stroke-width: 8; stroke-linecap: round; }
+      .pear-face { fill: #3D3D3D; }
+      .pear-cheek { fill: #F4A2A2; opacity: 0.8; }
+    </style>
+  </defs>
+
+  <!-- 輪郭とパーツ -->
+  <g id="RoundPearCharacter">
+    <!-- 茎（ヘタ） -->
+    <path d="M 100 55 C 95 35 105 25 113 25" class="pear-stem" />
+    
+    <!-- 葉っぱ -->
+    <path d="M 102 50 C 115 35 132 38 132 50 C 132 62 115 58 102 50 Z" class="pear-leaf" />
+    
+    <!-- 梨のからだ（横にぽってり丸いシルエット） -->
+    <path d="M 100 60 
+             C 145 60 165 80 165 112 
+             C 165 145 140 165 100 165 
+             C 60 165 35 145 35 112 
+             C 35 80 55 60 100 60 Z" class="pear-body" />
+             
+    <!-- ほっぺ（内側に寄せて可愛さアップ） -->
+    <circle cx="82" cy="120" r="9" class="pear-cheek" />
+    <circle cx="118" cy="120" r="9" class="pear-cheek" />
+
+    <!-- お顔（ちょこんとした目とにっこり口元） -->
+    <circle cx="90" cy="113" r="5" class="pear-face" />
+    <circle cx="110" cy="113" r="5" class="pear-face" />
+    <path d="M 97 122 C 97 126 103 126 103 122" fill="none" stroke="#3D3D3D" stroke-width="4.5" stroke-linecap="round" />
+  </g>
+</svg>

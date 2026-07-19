@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/logo.svg" alt="Pearssue logo" width="160">
+</p>
+
 # Pearssue（AIと一緒に育てるタスク帳）
 
 人間にもAIエージェントにも読めるMarkdownベースのIssue管理ツール。DBもサーバーも不要で、Gitでそのまま差分管理できる。
