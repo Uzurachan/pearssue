@@ -1,0 +1,2 @@
+# aissue
+AI Issue template
