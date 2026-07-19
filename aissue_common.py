@@ -96,19 +96,28 @@ def parse_frontmatter(frontmatter):
     return data
 
 
-def read_issue(index_path):
-    """index.mdを読み、frontmatterをdictとして返す。"""
+def read_issue_text(index_path):
+    """index.mdを読み、(frontmatter dict, 本文str) のタプルを返す。"""
     with open(index_path, "r", encoding="utf-8") as f:
         text = f.read()
-    frontmatter, _ = split_frontmatter(text)
-    return parse_frontmatter(frontmatter)
+    frontmatter, body = split_frontmatter(text)
+    return parse_frontmatter(frontmatter), body.strip()
+
+
+def read_issue(index_path):
+    """index.mdを読み、frontmatterをdictとして返す。"""
+    data, _ = read_issue_text(index_path)
+    return data
 
 
 PRIORITY_ORDER = {"high": 0, "medium": 1, "low": 2}
 
 
 def collect_issues(issues_dir):
-    """issues_dir配下の全Issueのfrontmatterをdictのリストとして返す(id順)。"""
+    """issues_dir配下の全Issueのfrontmatterをdictのリストとして返す(id順)。
+
+    各dictには本文が `body` キーで(frontmatterを除いた文字列として)含まれる。
+    """
     issues = []
     if not os.path.isdir(issues_dir):
         return issues
@@ -116,10 +125,23 @@ def collect_issues(issues_dir):
         index_path = os.path.join(issues_dir, name, "index.md")
         if not os.path.isfile(index_path):
             continue
-        data = read_issue(index_path)
+        data, body = read_issue_text(index_path)
         data.setdefault("id", name)
+        data["body"] = body
         issues.append(data)
     return issues
+
+
+def list_attachments(issues_dir, issue_id, attachments_dir_name):
+    """Issueの添付ファイル名一覧(ファイル名のみ)を返す。"""
+    attach_dir = os.path.join(issues_dir, issue_id, attachments_dir_name)
+    if not os.path.isdir(attach_dir):
+        return []
+    return sorted(
+        name
+        for name in os.listdir(attach_dir)
+        if os.path.isfile(os.path.join(attach_dir, name))
+    )
 
 
 def issue_sort_key(sort_by):

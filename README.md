@@ -97,3 +97,5 @@ python3 export_html.py --status processing --output processing.html
 ```
 
 `list_issues.py` と同じ `--sort` / `--status` オプションが使える。生成された `issues.html` はブラウザで開けるほか、メールやチャットでそのまま送って共有できる。
+
+一覧テーブルの各id(例: `0001`)はページ内リンクになっており、押すとそのIssueの詳細(メタデータ・本文・添付ファイル一覧)が同じファイル内でアコーディオン展開される。ファイルは1つのままなので、送るのも開くのも`issues.html`単体で完結する。

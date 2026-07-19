@@ -40,6 +40,8 @@ AIがタスクの読み取り・更新・管理を主体的に行えることを
   - 並べ替えは `reorder_issues.py` に一本化。`--sequence id1,id2,...` で複数Issueをまとめてこの順に採番するか、`--id <id> --order <n>` で1件だけ調整する。`order`の重複解消(自動リナンバリング)は行わず、同順位は許容してid順で安定表示する。
   - Claude Codeでは `.claude/skills/list-issues/SKILL.md` が「一覧見せて」「Aを先にやって」のような自然言語をヒアリングし、`list_issues.py` / `reorder_issues.py` を呼び出す。
   - 社外・同僚などへの共有用に `export_html.py` を追加。`list_issues.py` と同じソート・フィルタで、外部依存のない単体HTMLファイル(デフォルト`issues.html`)を出力する。共有はファイルをそのまま渡す想定で、Web公開(Artifact等)は行わない。`collect_issues`/`issue_sort_key`は `aissue_common.py` に集約し、`list_issues.py`と`export_html.py`の両方から使う。
+  - `export_html.py` の一覧テーブルではid列を `#issue-detail-<id>` へのページ内リンクにし、同一ファイル内の `<details>` アコーディオンとして各Issueの詳細(メタデータテーブル・本文・添付ファイル一覧、show-issueと同じ内容)を末尾にまとめて出力する。リンククリック時に対象の`<details>`を確実に開いてスクロールさせるため、最小限のインラインJS(`hashchange`/`DOMContentLoaded`監視)を埋め込む(外部ファイルへの依存はなし)。複数ファイルへの分割は「ファイル1つで渡す」前提を崩すため行わない。
+  - 詳細を辿った後に一覧へ戻りやすいよう、右下固定(`position: fixed`)の「Topへ戻る」リンク(`#top`へのアンカー、`scroll-behavior: smooth`でスムーズスクロール)を常時表示する。
 - **Issue1件の詳細表示フォーマットを決定。** 読み取り専用のため、専用ヘルパースクリプトは作らずSkillの指示のみで実現する(`.claude/skills/show-issue/SKILL.md`)。
   - 表示順は「見出し(`# <id>: <title>`)→ メタデータテーブル(status/priority/tags/assignee/order/created/updated)→ 本文をそのまま(要約・加工しない)→ 添付ファイル一覧」。
   - 添付ファイル一覧は `attachments/` を実スキャンし、`` - `ファイル名`(簡潔な説明) `` の形式でリスト表示する。中身は表示しない。
