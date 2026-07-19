@@ -22,7 +22,11 @@ AIがタスクの読み取り・更新・管理を主体的に行えることを
   - Gitの差分でIssueの変更履歴が自然に追える(コミット単位でIssueの追加・更新・クローズが追跡可能)ことをメリットとして活かす。
   - 実例は `examples/issues/` を参照(`0001/`はバグ報告+ログ添付の例、`0002/`は機能要望+設計メモ添付の例)。
 - **実装言語はPythonに決定。** 外部ライブラリに依存せず標準ライブラリのみで実装する方針(セットアップの敷居を下げるため)。
-- **初回セットアップスクリプト `init.py` を用意。** 対話式でIssue IDの形式(連番 / 日付+連番 / ULID)、Issue格納ディレクトリ名、添付ファイル用サブディレクトリ名を決め、設定を `.aissue.json` に書き出す。詳細は `README.md` の「セットアップ」を参照。
+- **ツール本体(このリポジトリ)とタスクデータを分離する運用に決定。** 複数のプロジェクト(別々のGitリポジトリ)を横断して1箇所でタスク管理したいという要望から、aissueは1箇所にcloneして使う「ツール一式」とし、実際のIssueデータ(`issues/`)はこのリポジトリの外(例: 兄弟ディレクトリ`../aissue-data/issues`)に置く運用を基本とする。
+  - 誤ってタスクデータをこのリポジトリにコミットしてしまう事故を防ぐのが主目的。`init.py`は`issues_dir`のデフォルトを`../aissue-data/issues`にし、リポジトリ内のパスが指定された場合は警告を出す(強制はしない)。
+  - `.aissue.json`自体は`.gitignore`に含め、各自がcloneした後に`init.py`で自分のデータディレクトリを設定する前提とする。
+  - 現状は複数プロジェクトのIssueも1つの`issues_dir`直下にフラットに置く(プロジェクトを区別するフィールドやサブディレクトリ分割は未実装、下記TBD参照)。
+- **初回セットアップスクリプト `init.py` を用意。** 対話式でIssue IDの形式(連番 / 日付+連番 / ULID)、Issue格納ディレクトリのパス、添付ファイル用サブディレクトリ名を決め、設定を `.aissue.json` に書き出す。詳細は `README.md` の「セットアップ」を参照。
 - **Issue作成は「対話(AI/Skill)+ ファイル生成(スクリプト)」の役割分担に決定。**
   - ヒアリングや本文の組み立てはAIエージェント(Claude Codeでは `.claude/skills/create-issue/SKILL.md`)が担当する。ユーザーが「Issueを作って」のように自然言語で依頼した際に発火する想定。
   - ID採番・ディレクトリ作成・frontmatter生成といった機械的な処理は `new_issue.py` に一本化し、AIの解釈揺れによるID重複やフォーマット崩れを防ぐ。
@@ -55,6 +59,7 @@ AIがタスクの読み取り・更新・管理を主体的に行えることを
 - Issue間の関連付け(親子・依存関係)の表現方法
 - 複数人(複数AI)での同時編集・競合解決の方針(Git管理下での衝突時の扱い)
 - `order`の重複が増えてきた場合の自動リナンバリングの要否
+- 複数プロジェクトのIssueが増えた場合、`issues_dir`直下でどう区別するか(project名でのサブディレクトリ分割、frontmatterへの`project`フィールド追加など)。現状はフラット管理で様子見
 
 ## リポジトリ構成
 
@@ -72,7 +77,7 @@ AIがタスクの読み取り・更新・管理を主体的に行えることを
 - `.claude/skills/list-issues/SKILL.md`: Claude Code向けの一覧表示・並べ替えSkill。`list_issues.py`/`reorder_issues.py`を呼び出す
 - `.claude/skills/show-issue/SKILL.md`: Claude Code向けのIssue詳細表示Skill。ヘルパースクリプトなしで出力フォーマットのみ定義する
 - `examples/issues/`: Issueディレクトリ構成のサンプル(`0001/`, `0002/`など)
-- `.aissue.json`: `init.py` 実行後に生成される設定ファイル(id_format, issues_dir, attachments_dir)
+- `.aissue.json`: `init.py` 実行後に生成される設定ファイル(id_format, issues_dir, attachments_dir)。`issues_dir`は通常リポジトリの外を指すため`.gitignore`で除外している
 
 ## コーディング規約
 

@@ -34,6 +34,12 @@ def choose_id_format():
         print("1〜3の番号を入力してください。")
 
 
+def is_inside_repo(path):
+    repo_root = os.path.abspath(".")
+    target = os.path.abspath(path)
+    return target == repo_root or target.startswith(repo_root + os.sep)
+
+
 def main():
     print("=== aissue セットアップ ===")
 
@@ -44,7 +50,17 @@ def main():
             return
 
     id_format = choose_id_format()
-    issues_dir = ask("\nIssueを格納するディレクトリ名", default="issues")
+    issues_dir = ask(
+        "\nIssueを格納するディレクトリのパス(このリポジトリの外を推奨。"
+        "誤コミット防止のため)",
+        default="../aissue-data/issues",
+    )
+    if is_inside_repo(issues_dir):
+        print(
+            f"\n警告: '{issues_dir}' はこのリポジトリの中です。"
+            "タスクデータを誤ってこのリポジトリにコミットしてしまう可能性があるため、"
+            "リポジトリの外のパス(例: ../aissue-data/issues)を推奨します。"
+        )
     attachments_dir = ask("添付ファイル用のサブディレクトリ名", default="attachments")
 
     config = {
